@@ -9,3 +9,5 @@ export const { ACCESS_TOKEN_EXPIRY } = process.env;
 export const { REFRESH_TOKEN_EXPIRY } = process.env;
 
 export const { REFRESH_TOKEN_SECRET } = process.env;
+
+export const { RESET_TOKEN_URL } = process.env;
