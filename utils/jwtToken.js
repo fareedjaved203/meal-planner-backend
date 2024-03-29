@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 
 import { generateAccessAndRefreshTokens } from "../controllers/user.controllers.js";
+import { ApiResponse } from "./ApiResponse.js";
 
 const sendToken = async (user, statusCode = 200, res, msg) => {
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(

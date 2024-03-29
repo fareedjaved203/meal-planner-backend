@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import dotenv from "dotenv";
+import { ADMIN, USER } from "../constants.js";
 
 dotenv.config({ path: "../.env" });
 
@@ -23,13 +24,17 @@ const userSchema = new mongoose.Schema(
       unique: true,
       validate: [validator.isEmail, "Please Enter A Valid Email"],
       unique: true,
-      lowecase: true,
+      lowercase: true,
     },
     password: {
       type: String,
       required: [true, "Please Enter Your Password"],
       minLength: [5, "Passwword must be atleast 5 characters"],
-      select: false,
+    },
+    role: {
+      type: String,
+      enum: [ADMIN, USER],
+      default: USER,
     },
     refreshToken: String,
     resetPasswordToken: String,
@@ -46,7 +51,7 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods.generateAccessToken = function () {
-  return jwt.sign({ id: this._id, email: this.email }, process.envJWT_SECRET, {
+  return jwt.sign({ id: this._id, email: this.email }, process.env.JWT_SECRET, {
     expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
   });
 };

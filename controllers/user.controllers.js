@@ -16,6 +16,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
     return { accessToken, refreshToken };
   } catch (error) {
+    console.log(error);
     throw new ApiError(
       500,
       "Something went wrong while generating refresh and access token"
@@ -24,6 +25,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
+  console.log(req.body);
   const { name, email, password } = req.body;
 
   if ([email, name, password].some((field) => field?.trim() === "")) {
@@ -39,9 +41,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const user = await User.create({
-    email,
-    password,
-    name: username.toLowerCase(),
+    ...req.body,
   });
 
   const createdUser = await User.findById(user._id).select(
@@ -59,6 +59,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+  console.log(req.body);
 
   if (!email) {
     throw new ApiError(400, "email is required");
