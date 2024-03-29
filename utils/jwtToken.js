@@ -1,12 +1,10 @@
-const { asyncHandler } = require("./asyncHandler");
-
 const User = require("../models/user.model");
 
 const {
   generateAccessAndRefreshTokens,
 } = require("../controllers/user.controllers");
 
-const sendToken = asyncHandler(async (user, statusCode = 200, res, msg) => {
+const sendToken = async (user, statusCode = 200, res, msg) => {
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
     user._id
   );
@@ -34,6 +32,6 @@ const sendToken = asyncHandler(async (user, statusCode = 200, res, msg) => {
         msg
       )
     );
-});
+};
 
 module.exports = sendToken;
