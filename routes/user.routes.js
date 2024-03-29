@@ -5,7 +5,7 @@ const {
   loginUser,
   forgotPassword,
   resetPassword,
-} = require("../controllers/userController");
+} = require("../controllers/user.controllers");
 
 // const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 

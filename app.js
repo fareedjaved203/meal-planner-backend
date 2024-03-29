@@ -1,27 +1,18 @@
-require("dotenv").config({ path: "./.env" });
-const express = require("express");
-const { PORT } = require("./constants");
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import compression from "compression";
+
 const app = express();
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const compression = require("compression");
-
-require("./config/db");
-
-const errorMiddleware = require("./middlewares/error");
 
 app.use(cors());
 app.use(compression());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json({ limit: "16kb" }));
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+app.use(cookieParser());
 
-const user = require("./routes/userRoute");
+import userRouter from "./routes/user.routes.js";
 
-app.use("/api/v1", user);
+app.use("/api/v1/users", userRouter);
 
-app.use(errorMiddleware);
-
-app.listen(PORT, () => {
-  console.log(`server is running at http://localhost:${PORT}`);
-});
+export { app };
