@@ -1,10 +1,9 @@
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
-import { User } from "../models/user.model.js";
-import { JWT_SECRET } from "../constants.js";
+import User from "../models/user.model.js";
 
-export const isAuthenticatedUser = asyncHandler(async (req, _, next) => {
+const isAuthenticatedUser = asyncHandler(async (req, _, next) => {
   try {
     const token =
       req.cookies?.accessToken ||
@@ -14,7 +13,7 @@ export const isAuthenticatedUser = asyncHandler(async (req, _, next) => {
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const decodedToken = jwt.verify(token, JWT_SECRET);
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await User.findById(decodedToken?._id).select(
       "-password -refreshToken"
@@ -45,7 +44,4 @@ const authorizeRoles = (...roles) => {
   };
 };
 
-module.exports = {
-  isAuthenticatedUser,
-  authorizeRoles,
-};
+export { isAuthenticatedUser, authorizeRoles };

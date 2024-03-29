@@ -1,14 +1,11 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
-const {
-  JWT_SECRET,
-  REFRESH_TOKEN_EXPIRY,
-  ACCESS_TOKEN_EXPIRY,
-} = require("../constants");
-require("dotenv").config({ path: "../.env" });
+import mongoose from "mongoose";
+import validator from "validator";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import dotenv from "dotenv";
+
+dotenv.config({ path: "../.env" });
 
 const userSchema = new mongoose.Schema(
   {
@@ -49,8 +46,8 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods.generateAccessToken = function () {
-  return jwt.sign({ id: this._id, email: this.email }, JWT_SECRET, {
-    expiresIn: ACCESS_TOKEN_EXPIRY,
+  return jwt.sign({ id: this._id, email: this.email }, process.envJWT_SECRET, {
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
   });
 };
 
@@ -59,9 +56,9 @@ userSchema.methods.generateRefreshToken = function () {
     {
       _id: this._id,
     },
-    JWT_SECRET,
+    process.env.JWT_SECRET,
     {
-      expiresIn: REFRESH_TOKEN_EXPIRY,
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
     }
   );
 };
@@ -76,5 +73,6 @@ userSchema.methods.getResetPasswordToken = async function () {
   this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
   return resetToken;
 };
+const User = mongoose.model("User", userSchema);
 
-module.exports = mongoose.model("User", userSchema);
+export default User;

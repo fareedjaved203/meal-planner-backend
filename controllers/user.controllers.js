@@ -1,9 +1,8 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
-import { User } from "../models/user.model.js";
+import User from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
-import { REFRESH_TOKEN_SECRET, RESET_TOKEN_URL } from "../constants.js";
 import sendToken from "../utils/jwtToken.js";
 
 const generateAccessAndRefreshTokens = async (userId) => {
@@ -116,7 +115,10 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   }
 
   try {
-    const decodedToken = jwt.verify(incomingRefreshToken, REFRESH_TOKEN_SECRET);
+    const decodedToken = jwt.verify(
+      incomingRefreshToken,
+      process.env.REFRESH_TOKEN_SECRET
+    );
 
     const user = await User.findById(decodedToken?._id);
 
@@ -144,7 +146,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     const resetToken = await user.getResetPasswordToken();
     await user.save({ validateBeforeSave: false });
 
-    const resetPasswordUrl = `${RESET_TOKEN_URL}/${resetToken}`;
+    const resetPasswordUrl = `${process.env.RESET_TOKEN_URL}/${resetToken}`;
 
     const emailData = {
       resetPasswordUrl: resetPasswordUrl,
@@ -217,4 +219,5 @@ export {
   refreshAccessToken,
   resetPassword,
   forgotPassword,
+  generateAccessAndRefreshTokens,
 };

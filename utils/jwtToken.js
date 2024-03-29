@@ -1,8 +1,6 @@
-const User = require("../models/user.model");
+import User from "../models/user.model.js";
 
-const {
-  generateAccessAndRefreshTokens,
-} = require("../controllers/user.controllers");
+import { generateAccessAndRefreshTokens } from "../controllers/user.controllers.js";
 
 const sendToken = async (user, statusCode = 200, res, msg) => {
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
@@ -34,4 +32,4 @@ const sendToken = async (user, statusCode = 200, res, msg) => {
     );
 };
 
-module.exports = sendToken;
+export default sendToken;
