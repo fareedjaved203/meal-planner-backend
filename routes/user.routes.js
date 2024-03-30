@@ -6,6 +6,7 @@ import {
   resetPassword,
   refreshAccessToken,
   logoutUser,
+  userDetails,
 } from "../controllers/user.controllers.js";
 import {
   isAuthenticatedUser,
@@ -17,6 +18,7 @@ const router = express.Router();
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/logout", isAuthenticatedUser, logoutUser);
+router.get("/user", isAuthenticatedUser, userDetails);
 router.post("/refresh-token", refreshAccessToken);
 router.post("/password/forgot", forgotPassword);
 router.put("/password/reset/:token", resetPassword);

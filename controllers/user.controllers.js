@@ -185,7 +185,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   }
 });
 
-const resetPassword = async (req, res, next) => {
+const resetPassword = asyncHandler(async (req, res, next) => {
   try {
     const resetPasswordToken = crypto
       .createHash("sha256")
@@ -211,7 +211,22 @@ const resetPassword = async (req, res, next) => {
   } catch (error) {
     throw new ApiError(500, error.message || "something went wrong");
   }
-};
+});
+
+const userDetails = asyncHandler(async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).select(
+      "-password -refreshToken"
+    );
+    if (user) {
+      return res
+        .status(200)
+        .json(new ApiResponse(200, user, "User details fetched"));
+    }
+  } catch (error) {
+    throw new ApiError(500, error.message || "something went wrong");
+  }
+});
 
 export {
   registerUser,
@@ -221,4 +236,5 @@ export {
   resetPassword,
   forgotPassword,
   generateAccessAndRefreshTokens,
+  userDetails,
 };
