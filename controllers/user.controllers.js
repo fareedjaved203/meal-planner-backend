@@ -62,7 +62,9 @@ const loginUser = asyncHandler(async (req, res) => {
   console.log(req.body);
 
   if (!email) {
-    throw new ApiError(400, "email is required");
+    return res
+      .status(400)
+      .json({ success: false, message: "Email is required" });
   }
 
   const user = await User.findOne({
@@ -70,16 +72,18 @@ const loginUser = asyncHandler(async (req, res) => {
   });
 
   if (!user) {
-    throw new ApiError(404, "User does not exist");
+    return res.status(404).json({ success: false, message: "User Not Found" });
   }
 
   const isPasswordValid = await user.comparePassword(password);
 
   if (!isPasswordValid) {
-    throw new ApiError(401, "Invalid user credentials");
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid User Credentials" });
   }
 
-  sendToken(user, 200, res, "User Logged In Successfully");
+  sendToken(user, 200, res);
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
@@ -104,7 +108,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     .status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, {}, "User logged Out"));
+    .json({ success: true, message: "Logout successful" });
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
