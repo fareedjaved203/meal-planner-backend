@@ -13,7 +13,8 @@ const postOrders = async (req, res) => {
 
 const getOrders = async (req, res) => {
   try {
-    const orders = await Order.find();
+    const orders = await Order.find({});
+    console.log(orders);
     if (orders) {
       return res
         .status(200)
