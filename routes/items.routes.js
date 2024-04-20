@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  postItems,
+  postItem,
   getItems,
   updateItem,
   deleteItem,
@@ -11,7 +11,7 @@ import { isAuthenticatedUser } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.post("/item", isAuthenticatedUser, postItems);
+router.post("/item", isAuthenticatedUser, postItem);
 router.get("/items", getItems);
 router.get("/item/:id", getSingleItem);
 router.put("/item/:id", isAuthenticatedUser, updateItem);
