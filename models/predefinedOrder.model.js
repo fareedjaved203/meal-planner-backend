@@ -3,10 +3,7 @@ import mongoose from "mongoose";
 const predefinedSchema = new mongoose.Schema(
   {
     pid: String,
-    predefined: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Orders'
-      }]
+    predefined: [mongoose.Schema.Types.Mixed],
   },
   { timestamps: true }
 );
