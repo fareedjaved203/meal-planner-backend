@@ -4,15 +4,19 @@ const itemSchema = new mongoose.Schema(
   {
     pid: String,
     date: Date,
-    numberLine1: String,
-    numberLine2: String,
-    levelSpiciness: String,
+    nameLine1: String,
+    nameLine2: String,
+    spiciness: String,
     diet: String,
     origin: String,
     preparationTime: String,
-    levelOfDifficulty: String,
-    ingredients: [String],
-    steps: [String],
+    difficulty: String,
+    ingredients: [{
+      value: String
+    }],
+    steps: [{
+      value: String
+    }],
   },
   { timestamps: true }
 );

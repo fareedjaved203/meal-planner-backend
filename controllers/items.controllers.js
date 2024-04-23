@@ -5,6 +5,11 @@ const postItem = async (req, res) => {
     const item = await Item.create({
       ...req.body,
     });
+    if (item) {
+      return res
+        .status(201)
+        .json({ success: true, message: "item Added" });
+    }
   } catch (error) {
     console.log(error);
     throw new ApiError(500, error);
@@ -14,7 +19,6 @@ const postItem = async (req, res) => {
 const getItems = async (req, res) => {
   try {
     const items = await Item.find({});
-    console.log(items);
     if (items) {
       return res
         .status(200)
@@ -56,15 +60,15 @@ const deleteItem = async (req, res) => {
 
 const updateItem = async (req, res) => {
   try {
-    const item = await Item.find({ pid: req.params.id });
-    if (item) {
-      item.status = req.body.status;
-    }
-    await item.save({ validateBeforeSave: false });
+    const item = await Item.findOneAndUpdate(
+      { pid: req.params.id },
+      req.body,
+      { new: true, runValidators: true }
+    );
 
     return res
       .status(200)
-      .json({ success: true, message: "item Updated", item });
+      .json({ success: true, message: "item Updated" });
   } catch (error) {
     console.log(error);
     throw new ApiError(500, error);
