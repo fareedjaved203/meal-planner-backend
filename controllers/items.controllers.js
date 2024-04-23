@@ -1,3 +1,4 @@
+import {format} from 'date-fns';
 import Item from "../models/items.model.js";
 
 const postItem = async (req, res) => {
@@ -19,6 +20,9 @@ const postItem = async (req, res) => {
 const getItems = async (req, res) => {
   try {
     const items = await Item.find({});
+    items.forEach(item => {
+      item.createdAt = format(new Date(item.createdAt), 'yyyy-MM-dd');
+    });
     if (items) {
       return res
         .status(200)
@@ -32,7 +36,9 @@ const getItems = async (req, res) => {
 
 const getSingleItem = async (req, res) => {
   try {
-    const item = await Item.find({ pid: req.params.id });
+    const item = await Item.findById(req.params.id);
+    item.createdAt = format(new Date(item.createdAt), 'yyyy-MM-dd');
+    console.log(`item is: ${item}`);
     if (item) {
       return res
         .status(200)
@@ -60,15 +66,17 @@ const deleteItem = async (req, res) => {
 
 const updateItem = async (req, res) => {
   try {
-    const item = await Item.findOneAndUpdate(
-      { pid: req.params.id },
+    const item = await Item.findByIdAndUpdate(
+      req.params.id,
       req.body,
       { new: true, runValidators: true }
     );
 
-    return res
-      .status(200)
-      .json({ success: true, message: "item Updated" });
+    if(item){
+      return res
+        .status(200)
+        .json({ success: true, message: "item Updated" });
+    }
   } catch (error) {
     console.log(error);
     throw new ApiError(500, error);

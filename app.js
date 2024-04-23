@@ -17,7 +17,7 @@ app.use(cookieParser());
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/orders", orderRouter);
-app.use("/api/v1/orders", itemRouter);
-app.use("/api/v1/orders", predefinedRouter);
+app.use("/api/v1/items", itemRouter);
+app.use("/api/v1/predefined", predefinedRouter);
 
 export { app };
