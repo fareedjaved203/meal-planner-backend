@@ -2,14 +2,20 @@ import Predefined from "../models/predefinedOrder.model.js";
 
 const postPredefined = async (req, res) => {
   try {
-    const { pid, predefined } = req.body;
+    const { pid, predefined, orderId } = req.body;
+
     console.log(req.body);
 
     const predefinedDoc = await Predefined.findOneAndUpdate(
       { pid: pid },
-      { $addToSet: { predefined: { $each: predefined } } },
+      {
+        $addToSet: { predefined: { $each: predefined } },
+        orderId: orderId,
+      },
       { new: true, upsert: true }
     );
+
+    console.log(predefinedDoc);
 
     if (predefinedDoc) {
       return res
@@ -25,7 +31,6 @@ const postPredefined = async (req, res) => {
 const getPredefined = async (req, res) => {
   try {
     const predefined = await Predefined.findOne({ pid: req.params.id });
-    console.log(predefined);
     if (predefined) {
       return res
         .status(200)
@@ -40,8 +45,8 @@ const getPredefined = async (req, res) => {
 const deletePredefined = async (req, res) => {
   try {
     const predefined = await Predefined.findOneAndUpdate(
-      { pid: req.params.pid },
-      { $pull: { predefined: req.params.id } },
+      { orderId: req.params.paramsId },
+      { $pull: { predefined: { _id: req.params.id } } },
       { new: true }
     );
 
@@ -51,10 +56,6 @@ const deletePredefined = async (req, res) => {
         message: "Order removed from predefined",
         predefined,
       });
-    } else {
-      return res
-        .status(404)
-        .json({ success: false, message: "Predefined not found" });
     }
   } catch (error) {
     console.log(error);
