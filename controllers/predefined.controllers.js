@@ -4,9 +4,21 @@ const postPredefined = async (req, res) => {
   try {
     const { pid, predefined, orderId } = req.body;
 
-    console.log(req.body);
+    const predefinedDoc = await Predefined.findOne({ pid: pid });
 
-    const predefinedDoc = await Predefined.findOneAndUpdate(
+    if (
+      predefinedDoc &&
+      predefinedDoc.predefined.length + predefined.length > 10
+    ) {
+      return res.status(200).json({
+        success: false,
+        message: "Only 10 items can be added at once",
+      });
+    }
+
+    const oldLength = predefinedDoc ? predefinedDoc.predefined.length : 0;
+
+    const updatedDoc = await Predefined.findOneAndUpdate(
       { pid: pid },
       {
         $addToSet: { predefined: { $each: predefined } },
@@ -15,12 +27,16 @@ const postPredefined = async (req, res) => {
       { new: true, upsert: true }
     );
 
-    console.log(predefinedDoc);
-
-    if (predefinedDoc) {
-      return res
-        .status(201)
-        .json({ success: true, message: "Predefined updated or created" });
+    if (updatedDoc) {
+      if (updatedDoc.predefined.length === oldLength) {
+        return res
+          .status(200)
+          .json({ success: false, message: "Items already added" });
+      } else {
+        return res
+          .status(201)
+          .json({ success: true, message: "Item Added Successfully" });
+      }
     }
   } catch (error) {
     console.log(error);
